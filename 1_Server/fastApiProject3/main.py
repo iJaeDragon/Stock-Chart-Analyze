@@ -1,13 +1,18 @@
 from fastapi import FastAPI
+from Scheduler.StockDataCollection import start_scheduler, shutdown_scheduler
+from Views.StockView import *
 
 app = FastAPI()
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.on_event("startup")
+def on_startup():
+    start_scheduler()
 
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+@app.on_event("shutdown")
+def on_shutdown():
+    shutdown_scheduler()
+
+
+app.include_router(router)
