@@ -9,13 +9,20 @@ library(ggplot2)
 library(jsonlite)
 library(forecast)
 
-# 날짜 설정
+# 파일 저장 경로
+saveDir <- "C:/Users/achim/Documents/data"
+
+# API Info
+apiServerIp <- "127.0.0.1"
+apiServerPort <- "8000"
+
+# 파라미터 심볼&날짜 설정
 symbol <- "BTCUSDT"
 start_date <- "2024-08-02"
 end_date <- "2024-08-03"
 
 # API 엔드포인트 URL 설정
-url <- paste0("http://localhost:8000/stock/", symbol,"/data?start_date=", start_date, "&end_date=", end_date)
+url <- paste0("http://", apiServerIp, ":", apiServerPort,"/stock/", symbol, "/data?start_date=", start_date, "&end_date=", end_date)
 
 # GET 요청
 response <- GET(url)
@@ -54,13 +61,33 @@ if (status_code(response) == 200) {
   )
   
   # 원본 데이터와 예측 데이터를 함께 시각화
-  ggplot() +
+  plot <- ggplot() +
     geom_line(data = data_frame, aes(x = date, y = price), color = "blue") +
     geom_line(data = forecast_df, aes(x = date, y = price), color = "red") +
     labs(title = "BTCUSDT Price and Forecast over Time", x = "Time", y = "Price (USD)") +
     theme_minimal() +
     scale_x_datetime(date_labels = "%Y-%m-%d %H:%M:%S", date_breaks = "1 hour") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+  
+  # 그래프를 화면에 출력
+  print(plot)
+  
+  # 그래프의 y축 범위를 확인
+  plot_build <- ggplot_build(plot)
+  y_range <- plot_build$panel$ranges[[1]]$y.range
+  
+  # y_range가 NULL이 아닌지 확인
+  if (!is.null(y_range) && length(y_range) == 2 && diff(y_range) > 0 && length(forecast_df$price) > 1) {
+    # 현재 시간 정보를 파일 이름에 포함
+    timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+    filename <- paste0(saveDir, "/BTCUSDT_Price_Forecast_", timestamp, ".png")
+    
+    # 그래프를 지정한 디렉토리와 파일명으로 저장
+    ggsave(filename = filename, plot = plot, width = 10, height = 6, dpi = 300)
+  } else {
+    cat("The forecast graph appears to be invalid or the y-range is not valid. Not saving the file.\n")
+  }
+  
 } else {
   cat("Error: Failed to retrieve data\n")
-} 
+}
