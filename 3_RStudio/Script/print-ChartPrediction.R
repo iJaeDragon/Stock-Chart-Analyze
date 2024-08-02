@@ -51,12 +51,12 @@ if (status_code(response) == 200) {
   # 모델 요약 출력
   summary(fit)
   
-  # 예측 기간 설정 (1시간 = 3600개의 1초 포인트)
-  forecasted <- forecast(fit, h = 3600)
+  # 예측 기간 설정 (30분 = 1800개의 1초 포인트)
+  forecasted <- forecast(fit, h = 1800)
   
   # 예측된 데이터 프레임 생성
   forecast_df <- data.frame(
-    date = seq(max(data_frame$date) + 1, by = "1 sec", length.out = 3600),
+    date = seq(max(data_frame$date) + 1, by = "1 sec", length.out = 1800),
     price = as.numeric(forecasted$mean)
   )
   
