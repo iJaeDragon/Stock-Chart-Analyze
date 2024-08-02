@@ -19,7 +19,7 @@ apiServerPort <- "8000"
 # 파라미터 심볼&날짜 설정
 symbol <- "BTCUSDT"
 start_date <- "2024-08-02"
-end_date <- "2024-08-03"
+end_date <- "2024-08-02"
 
 # API 엔드포인트 URL 설정
 url <- paste0("http://", apiServerIp, ":", apiServerPort, "/stock/", symbol, "/data?start_date=", start_date, "&end_date=", end_date)
@@ -35,14 +35,10 @@ if (status_code(response) == 200) {
   # 리스트를 데이터 프레임으로 변환
   data_frame <- do.call(rbind, lapply(data_list, as.data.frame))
   
-  # date 컬럼을 날짜-시간 형식으로 변환
-  data_frame$date <- as.POSIXct(paste0(data_frame$date, " 00:00:00"), format="%Y-%m-%d %H:%M:%S", tz = "UTC")
-  
-  # 데이터 확인
-  # print(head(data_frame))
+  # date 컬럼을 날짜-시간 형식으로 변환 (한국 시간대)
+  data_frame$date <- as.POSIXct(paste0(data_frame$date, " 00:00:00"), format="%Y-%m-%d %H:%M:%S", tz = "Asia/Seoul")
   
   # 시계열 데이터 생성 (1초 간격으로 수집된 데이터)
-  # 1시간의 데이터를 3600개의 1초 포인트로 구성
   ts_data <- ts(data_frame$price, start = c(1), frequency = 3600)
   
   # ARIMA 모델 적합
@@ -51,14 +47,18 @@ if (status_code(response) == 200) {
   # 모델 요약 출력
   summary(fit)
   
-  # 예측 기간 설정 (1시간 = 3600개의 1초 포인트)
-  forecasted <- forecast(fit, h = 3600)
+  # 예측 기간 설정 (1시간 30분 = 5400개의 1초 포인트)
+  forecasted <- forecast(fit, h = 5400)
   
   # 예측된 데이터 프레임 생성
   forecast_df <- data.frame(
-    date = seq(max(data_frame$date) + 1, by = "1 sec", length.out = 3600),
+    date = seq(max(data_frame$date) + 1, by = "1 sec", length.out = 5400),
     price = as.numeric(forecasted$mean)
   )
+  
+  # x축의 범위를 start_date의 당일 00:00:00부터 end_date의 하루 뒤까지 설정
+  x_axis_start <- as.POSIXct(paste0(start_date, " 00:00:00"), tz = "Asia/Seoul")
+  x_axis_end <- as.POSIXct(paste0(end_date, " 23:59:59"), tz = "Asia/Seoul")
   
   # 원본 데이터와 예측 데이터를 함께 시각화
   plot <- ggplot() +
@@ -66,7 +66,11 @@ if (status_code(response) == 200) {
     geom_line(data = forecast_df, aes(x = date, y = price), color = "red") +
     labs(title = "BTCUSDT Price and Forecast over Time", x = "Time", y = "Price (USD)") +
     theme_minimal() +
-    scale_x_datetime(date_labels = "%Y-%m-%d %H:%M:%S", date_breaks = "1 hour") +
+    scale_x_datetime(
+      limits = c(x_axis_start, x_axis_end),  # x축의 범위를 start_date 당일 00:00:00부터 end_date 하루 뒤까지 설정
+      date_labels = "%Y-%m-%d %H:%M:%S",
+      date_breaks = "1 hour"
+    ) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
   
   # 그래프를 화면에 출력
