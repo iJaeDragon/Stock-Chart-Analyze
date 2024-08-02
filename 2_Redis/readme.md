@@ -18,5 +18,8 @@
 ### 모든 데이터 제거
  - FLUSHALL
 
+### 메모리 사용량 조회
+ - INFO memory
+
 ## Setting
  - ref : https://sic-dev.tistory.com/60
