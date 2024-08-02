@@ -26,7 +26,7 @@ def scheduled_task():
     StockController.put_stock_data(curInfo)
 
 def start_scheduler():
-    scheduler.add_job(scheduled_task, 'interval', seconds=5)  # 5초마다 실행
+    scheduler.add_job(scheduled_task, 'interval', seconds=1)  # 1초마다 실행
     scheduler.start()
 
 def shutdown_scheduler():

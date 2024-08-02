@@ -10,7 +10,7 @@ library(jsonlite)
 library(forecast)
 
 # 파일 저장 경로
-saveDir <- "C:/Users/achim/Documents/data"
+saveDir <- "C:/Users/rhkgk/Documents/chartImage"
 
 # API Info
 apiServerIp <- "127.0.0.1"
