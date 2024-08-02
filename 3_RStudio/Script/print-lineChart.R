@@ -13,8 +13,8 @@ apiServerPort <- "8000"
 
 # 파라미터 심볼&날짜 설정
 symbol <- "BTCUSDT"
-start_date <- "2024-08-02"
-end_date <- "2024-08-03"
+start_date <- "2024080200"
+end_date <- "2024080323"
 
 # API 엔드포인트 URL 설정
 url <- paste0("http://localhost:8000/stock/", symbol,"/data?start_date=", start_date, "&end_date=", end_date)

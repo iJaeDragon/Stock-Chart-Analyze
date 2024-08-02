@@ -18,8 +18,8 @@ apiServerPort <- "8000"
 
 # 파라미터 심볼&날짜 설정
 symbol <- "BTCUSDT"
-start_date <- "2024-08-02"
-end_date <- "2024-08-03"
+start_date <- "2024080200"
+end_date <- "2024080323"
 
 # API 엔드포인트 URL 설정
 url <- paste0("http://", apiServerIp, ":", apiServerPort, "/stock/", symbol, "/data?start_date=", start_date, "&end_date=", end_date)
@@ -77,7 +77,7 @@ if (status_code(response) == 200) {
   filename <- paste0(saveDir, "/BTCUSDT_Price_Forecast_", timestamp, ".png")
   
   # 그래프를 지정한 디렉토리와 파일명으로 저장
-  ggsave(filename = filename, plot = plot, width = 10, height = 6, dpi = 300)
+  ggsave(filename = filename, plot = plot, width = 10, height = 6, dpi = 300, bg = "white")
   
 } else {
   cat("Error: Failed to retrieve data\n")

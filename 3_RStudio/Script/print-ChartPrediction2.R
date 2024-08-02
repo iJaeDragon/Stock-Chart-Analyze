@@ -18,8 +18,12 @@ apiServerPort <- "8000"
 
 # 파라미터 심볼&날짜 설정
 symbol <- "BTCUSDT"
-start_date <- "2024-08-02"
-end_date <- "2024-08-02"
+start_date <- "2024080223"  # 연원일시간 형식
+end_date <- "2024080305"    # 연원일시간 형식
+
+# 날짜와 시간을 POSIXct 객체로 변환
+start_date_posix <- as.POSIXct(paste0(substr(start_date, 1, 8), " ", substr(start_date, 9, 10), ":00:00"), format="%Y%m%d %H:%M:%S", tz = "Asia/Seoul")
+end_date_posix <- as.POSIXct(paste0(substr(end_date, 1, 8), " ", substr(end_date, 9, 10), ":00:00"), format="%Y%m%d %H:%M:%S", tz = "Asia/Seoul")
 
 # API 엔드포인트 URL 설정
 url <- paste0("http://", apiServerIp, ":", apiServerPort, "/stock/", symbol, "/data?start_date=", start_date, "&end_date=", end_date)
@@ -36,7 +40,7 @@ if (status_code(response) == 200) {
   data_frame <- do.call(rbind, lapply(data_list, as.data.frame))
   
   # date 컬럼을 날짜-시간 형식으로 변환 (한국 시간대)
-  data_frame$date <- as.POSIXct(paste0(data_frame$date, " 00:00:00"), format="%Y-%m-%d %H:%M:%S", tz = "Asia/Seoul")
+  data_frame$date <- as.POSIXct(data_frame$date, format="%Y-%m-%d %H:%M:%S", tz = "Asia/Seoul")
   
   # 시계열 데이터 생성 (1초 간격으로 수집된 데이터)
   ts_data <- ts(data_frame$price, start = c(1), frequency = 3600)
@@ -57,8 +61,8 @@ if (status_code(response) == 200) {
   )
   
   # x축의 범위를 start_date의 당일 00:00:00부터 end_date의 하루 뒤까지 설정
-  x_axis_start <- as.POSIXct(paste0(start_date, " 00:00:00"), tz = "Asia/Seoul")
-  x_axis_end <- as.POSIXct(paste0(end_date, " 23:59:59"), tz = "Asia/Seoul")
+  x_axis_start <- as.POSIXct(paste0(substr(start_date, 1, 8), " 00:00:00"), format="%Y%m%d %H:%M:%S", tz = "Asia/Seoul")
+  x_axis_end <- as.POSIXct(paste0(substr(end_date, 1, 8), " 23:59:59"), format="%Y%m%d %H:%M:%S", tz = "Asia/Seoul")
   
   # 원본 데이터와 예측 데이터를 함께 시각화
   plot <- ggplot() +
@@ -81,7 +85,7 @@ if (status_code(response) == 200) {
   filename <- paste0(saveDir, "/BTCUSDT_Price_Forecast_", timestamp, ".png")
   
   # 그래프를 지정한 디렉토리와 파일명으로 저장
-  ggsave(filename = filename, plot = plot, width = 10, height = 6, dpi = 300)
+  ggsave(filename = filename, plot = plot, width = 10, height = 6, dpi = 300, bg = "white")
   
 } else {
   cat("Error: Failed to retrieve data\n")
