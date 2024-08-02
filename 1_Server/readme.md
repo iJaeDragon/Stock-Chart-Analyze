@@ -9,7 +9,7 @@
 * Python Packages
     * APScheduler 3.10.4
     * redis 5.0.8
-    * pydanic-settings 2.4.0
+    * pydantic-setting 2.4.0
     * pytz 2024.1
     * requests 2.32.3
     * pydanic 2.8.2 (pydantic-core 2.20.1)
