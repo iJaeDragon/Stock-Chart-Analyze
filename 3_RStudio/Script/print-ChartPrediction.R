@@ -10,11 +10,12 @@ library(jsonlite)
 library(forecast)
 
 # 날짜 설정
+symbol <- "BTCUSDT"
 start_date <- "2024-08-02"
 end_date <- "2024-08-03"
 
 # API 엔드포인트 URL 설정
-url <- paste0("http://localhost:8000/stock/BTCUSDT/data?start_date=", start_date, "&end_date=", end_date)
+url <- paste0("http://localhost:8000/stock/", symbol,"/data?start_date=", start_date, "&end_date=", end_date)
 
 # GET 요청
 response <- GET(url)
