@@ -16,16 +16,17 @@ class StockController:
     @staticmethod
     def get_stock_data(symbol: str, start_date: str, end_date: str) -> List[StockModel]:
 
-        num_start_date = int(start_date.replace("-", ""))
-        num_end_date = int(end_date.replace("-", ""))
-
         if symbol is None:
             return "symbol이 입력되지 않았습니다."
         elif start_date is None:
             return "start_date가 입력되지 않았습니다."
         elif end_date is None:
             return "end_date 입력되지 않았습니다."
-        elif num_start_date > num_end_date:
+
+        num_start_date = int(start_date.replace("-", ""))
+        num_end_date = int(end_date.replace("-", ""))
+
+        if num_start_date > num_end_date:
             return "start_date가 end_date 클 수 없습니다."
 
         all_stock_data = []
