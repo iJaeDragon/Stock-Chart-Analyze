@@ -23,3 +23,6 @@
 
 ## Setting
  - ref : https://sic-dev.tistory.com/60
+
+## RDB
+ - ref : https://atoz-develop.tistory.com/entry/Redis-%E2%80%98RDB%E2%80%99-%ED%8F%AC%EB%A7%B7%EC%9D%98-%ED%8C%8C%EC%9D%BC%EC%9D%98-%EB%82%B4%EC%9A%A9%EC%9D%84-%ED%99%95%EC%9D%B8%ED%95%A0-%EC%88%98-%EC%9E%88%EB%8A%94-%EB%B0%A9%EB%B2%95
