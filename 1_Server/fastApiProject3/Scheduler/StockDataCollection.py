@@ -20,6 +20,7 @@ def scheduled_task():
     # 현재 한국 시간 가져오기 # 한국 표준시(KST) 시간대 생성
     kst_now = datetime.now(pytz.timezone('Asia/Seoul'))
     formatted_time = kst_now.strftime('%Y-%m-%d %H:%M:%S')
+    print(formatted_time, " 수집됨")
 
     curInfo = StockModel(symbol=data['symbol'], date=formatted_time, price=data['price'])
 
